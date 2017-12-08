@@ -1,0 +1,78 @@
+class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      positionX: 40,
+      positionY: 40
+    };
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleLeft = this.handleLeft.bind(this);
+    this.handleUp = this.handleUp.bind(this);
+    this.handleRight = this.handleRight.bind(this);
+    this.handleDown = this.handleDown.bind(this);
+  }
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
+  }
+
+  handleKeyPress(event) {
+    switch (event.keyCode) {
+      case 37:
+        this.handleLeft();
+        break;
+      case 38:
+        this.handleUp();
+        break;
+      case 39:
+        this.handleRight();
+        break;
+      case 40:
+        this.handleDown();
+        break;
+    }
+  }
+
+  handleLeft() {
+    this.setState({
+      positionX: this.state.positionX - 20
+    });
+  }
+
+  handleUp() {
+    this.setState({
+      positionY: this.state.positionY - 20
+    });
+  }
+
+  handleRight() {
+    this.setState({
+      positionX: this.state.positionX + 20
+    });
+  }
+
+  handleDown() {
+    this.setState({
+      positionY: this.state.positionY + 20
+    });
+  }
+
+  render() {
+    const character = {
+      position: 'absolute',
+      backgroundColor: 'blue',
+      width: 20,
+      height: 20,
+      top: this.state.positionY,
+      left: this.state.positionX
+    }
+
+    return (<div>
+      <div style={character}/>
+    </div>);
+  }
+}
+ReactDOM.render(<Game/>, document.getElementById("rogueLike"));
