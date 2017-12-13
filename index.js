@@ -66,44 +66,23 @@ var Game = function (_React$Component) {
   }, {
     key: 'handleLeft',
     value: function handleLeft() {
-      var movement = 20;
-      for (var a = 0; a < this.state.enemys.length; a++) {
-        var tempEnemy = this.state.enemys[a];
-        if (this.state.positionX - 20 == tempEnemy.x && this.state.positionY == tempEnemy.y) {
-          console.log("Whack!");
-          movement = 0;
-        }
-      }
+      var movement = this.collisionDetection("left", -20);
       this.setState({
-        positionX: this.state.positionX - movement
+        positionX: this.state.positionX + movement
       });
     }
   }, {
     key: 'handleUp',
     value: function handleUp() {
-      var movement = 20;
-      for (var a = 0; a < this.state.enemys.length; a++) {
-        var tempEnemy = this.state.enemys[a];
-        if (this.state.positionY - 20 == tempEnemy.y && this.state.positionX == tempEnemy.x) {
-          console.log("Noggin Whack!");
-          movement = 0;
-        }
-      }
+      var movement = this.collisionDetection("up", -20);
       this.setState({
-        positionY: this.state.positionY - movement
+        positionY: this.state.positionY + movement
       });
     }
   }, {
     key: 'handleRight',
     value: function handleRight() {
-      var movement = 20;
-      for (var a = 0; a < this.state.enemys.length; a++) {
-        var tempEnemy = this.state.enemys[a];
-        if (this.state.positionX + 20 == tempEnemy.x && this.state.positionY == tempEnemy.y) {
-          console.log("Right Whack!");
-          movement = 0;
-        }
-      }
+      var movement = this.collisionDetection("right", 20);
       this.setState({
         positionX: this.state.positionX + movement
       });
@@ -111,17 +90,33 @@ var Game = function (_React$Component) {
   }, {
     key: 'handleDown',
     value: function handleDown() {
-      var movement = 20;
-      for (var a = 0; a < this.state.enemys.length; a++) {
-        var tempEnemy = this.state.enemys[a];
-        if (this.state.positionY + 20 == tempEnemy.y && this.state.positionX == tempEnemy.x) {
-          console.log("Foot Whack!");
-          movement = 0;
-        }
-      }
+      var movement = this.collisionDetection("down", 20);
       this.setState({
         positionY: this.state.positionY + movement
       });
+    }
+  }, {
+    key: 'collisionDetection',
+    value: function collisionDetection(direction, increment) {
+      if (direction == "left" || direction == "right") {
+        for (var a = 0; a < this.state.enemys.length; a++) {
+          var tempEnemy = this.state.enemys[a];
+          if (this.state.positionX + increment == tempEnemy.x && this.state.positionY == tempEnemy.y) {
+            console.log("Side Whack!");
+            return 0;
+          }
+        }
+        return increment;
+      } else if (direction == "up" || direction == "down") {
+        for (var a = 0; a < this.state.enemys.length; a++) {
+          var tempEnemy = this.state.enemys[a];
+          if (this.state.positionY + increment == tempEnemy.y && this.state.positionX == tempEnemy.x) {
+            console.log("Vertical Whack!");
+            return 0;
+          }
+        }
+        return increment;
+      }
     }
   }, {
     key: 'render',
