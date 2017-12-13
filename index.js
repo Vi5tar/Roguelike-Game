@@ -18,7 +18,14 @@ var Game = function (_React$Component) {
 
     _this.state = {
       positionX: 40,
-      positionY: 40
+      positionY: 40,
+      enemys: [{
+        x: 120,
+        y: 100
+      }, {
+        x: 140,
+        y: 140
+      }]
     };
     _this.handleKeyPress = _this.handleKeyPress.bind(_this);
     _this.handleLeft = _this.handleLeft.bind(_this);
@@ -59,29 +66,61 @@ var Game = function (_React$Component) {
   }, {
     key: 'handleLeft',
     value: function handleLeft() {
+      var movement = 20;
+      for (var a = 0; a < this.state.enemys.length; a++) {
+        var tempEnemy = this.state.enemys[a];
+        if (this.state.positionX - 20 == tempEnemy.x && this.state.positionY == tempEnemy.y) {
+          console.log("Whack!");
+          movement = 0;
+        }
+      }
       this.setState({
-        positionX: this.state.positionX - 20
+        positionX: this.state.positionX - movement
       });
     }
   }, {
     key: 'handleUp',
     value: function handleUp() {
+      var movement = 20;
+      for (var a = 0; a < this.state.enemys.length; a++) {
+        var tempEnemy = this.state.enemys[a];
+        if (this.state.positionY - 20 == tempEnemy.y && this.state.positionX == tempEnemy.x) {
+          console.log("Noggin Whack!");
+          movement = 0;
+        }
+      }
       this.setState({
-        positionY: this.state.positionY - 20
+        positionY: this.state.positionY - movement
       });
     }
   }, {
     key: 'handleRight',
     value: function handleRight() {
+      var movement = 20;
+      for (var a = 0; a < this.state.enemys.length; a++) {
+        var tempEnemy = this.state.enemys[a];
+        if (this.state.positionX + 20 == tempEnemy.x && this.state.positionY == tempEnemy.y) {
+          console.log("Right Whack!");
+          movement = 0;
+        }
+      }
       this.setState({
-        positionX: this.state.positionX + 20
+        positionX: this.state.positionX + movement
       });
     }
   }, {
     key: 'handleDown',
     value: function handleDown() {
+      var movement = 20;
+      for (var a = 0; a < this.state.enemys.length; a++) {
+        var tempEnemy = this.state.enemys[a];
+        if (this.state.positionY + 20 == tempEnemy.y && this.state.positionX == tempEnemy.x) {
+          console.log("Foot Whack!");
+          movement = 0;
+        }
+      }
       this.setState({
-        positionY: this.state.positionY + 20
+        positionY: this.state.positionY + movement
       });
     }
   }, {
@@ -96,10 +135,24 @@ var Game = function (_React$Component) {
         left: this.state.positionX
       };
 
+      var boardCreate = this.state.enemys.map(function (thing, index) {
+        var enemy = {
+          position: 'absolute',
+          backgroundColor: 'red',
+          width: 20,
+          height: 20,
+          top: thing.y,
+          left: thing.x
+        };
+        return React.createElement('div', { style: enemy });
+      });
+
       return React.createElement(
         'div',
         null,
-        React.createElement('div', { style: character })
+        React.createElement('div', { style: character }),
+        ' ',
+        boardCreate
       );
     }
   }]);
