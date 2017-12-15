@@ -12,6 +12,24 @@ class Game extends React.Component {
           x: 140,
           y: 140
         }
+      ],
+      playArea: [
+        {
+          x: 0,
+          y: 0,
+          width: 400,
+          height: 360
+        }, {
+          x: 400,
+          y: 180,
+          width: 200,
+          height: 20
+        }, {
+          x: 200,
+          y: 360,
+          width: 20,
+          height: 200
+        }
       ]
     };
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -19,6 +37,7 @@ class Game extends React.Component {
     this.handleUp = this.handleUp.bind(this);
     this.handleRight = this.handleRight.bind(this);
     this.handleDown = this.handleDown.bind(this);
+    this.wallDetection = this.wallDetection.bind(this);
   }
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyPress);
@@ -46,34 +65,42 @@ class Game extends React.Component {
   }
 
   handleLeft() {
-    var movement = this.collisionDetection("left", -20);
-    this.setState({
-      positionX: this.state.positionX + movement
-    });
+    if (this.wallDetection("left", -20)) {
+      var movement = this.enemyDetection("left", -20);
+      this.setState({
+        positionX: this.state.positionX + movement
+      });
+    }
   }
 
   handleUp() {
-    var movement = this.collisionDetection("up", -20);
-    this.setState({
-      positionY: this.state.positionY + movement
-    });
+    if (this.wallDetection("up", -20)) {
+      var movement = this.enemyDetection("up", -20);
+      this.setState({
+        positionY: this.state.positionY + movement
+      });
+    }
   }
 
   handleRight() {
-    var movement = this.collisionDetection("right", 20);
-    this.setState({
-      positionX: this.state.positionX + movement
-    });
+    if (this.wallDetection("right", 20)) {
+      var movement = this.enemyDetection("right", 20);
+      this.setState({
+        positionX: this.state.positionX + movement
+      });
+    }
   }
 
   handleDown() {
-    var movement = this.collisionDetection("down", 20);
-    this.setState({
-      positionY: this.state.positionY + movement
-    });
+    if (this.wallDetection("down", 20)) {
+      var movement = this.enemyDetection("down", 20);
+      this.setState({
+        positionY: this.state.positionY + movement
+      });
+    }
   }
 
-  collisionDetection(direction, increment) {
+  enemyDetection(direction, increment) {
     if (direction == "left" || direction == "right") {
       for (var a = 0; a < this.state.enemys.length; a++) {
         var tempEnemy = this.state.enemys[a];
@@ -95,6 +122,26 @@ class Game extends React.Component {
     }
   }
 
+  wallDetection(direction, increment) {
+    if (direction == "left" || direction == "right") {
+      for (var a = 0; a < this.state.playArea.length; a++) {
+        var tempPlayArea = this.state.playArea[a];
+        if (this.state.positionX + increment >= tempPlayArea.x && this.state.positionX + increment < tempPlayArea.x + tempPlayArea.width && this.state.positionY >= tempPlayArea.y && this.state.positionY < tempPlayArea.y + tempPlayArea.height) {
+          return true;
+        }
+      }
+      return false;
+    } else if (direction == "up" || direction == "down") {
+      for (var a = 0; a < this.state.playArea.length; a++) {
+        var tempPlayArea = this.state.playArea[a];
+        if (this.state.positionY + increment >= tempPlayArea.y && this.state.positionY + increment < tempPlayArea.y + tempPlayArea.height && this.state.positionX >= tempPlayArea.x && this.state.positionX < tempPlayArea.x + tempPlayArea.width) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   render() {
     const character = {
       position: 'absolute',
@@ -105,7 +152,7 @@ class Game extends React.Component {
       left: this.state.positionX
     }
 
-    const boardCreate = this.state.enemys.map((thing, index) => {
+    const locateEnemys = this.state.enemys.map((thing, index) => {
       var enemy = {
         position: 'absolute',
         backgroundColor: 'red',
@@ -117,8 +164,22 @@ class Game extends React.Component {
       return <div style={enemy}></div>
     })
 
+    const playSpace = this.state.playArea.map((thing, index) => {
+      var playArea = {
+        position: 'absolute',
+        backgroundColor: 'yellow',
+        zIndex: -1,
+        width: thing.width,
+        height: thing.height,
+        top: thing.y,
+        left: thing.x
+      }
+      return <div style={playArea}/>
+    })
+
     return (<div>
-      <div style={character}/> {boardCreate}
+      <div style={character}/> {locateEnemys}
+      {playSpace}
     </div>);
   }
 }
