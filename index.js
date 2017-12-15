@@ -8,6 +8,55 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var heroMenu = {
+  position: 'absolute',
+  backgroundColor: 'black',
+  color: 'white',
+  width: 200,
+  height: 300,
+  top: 0,
+  left: 700
+};
+
+var HeroStats = function HeroStats(props) {
+  return React.createElement(
+    'div',
+    { style: heroMenu },
+    React.createElement(
+      'p',
+      null,
+      'X: ',
+      props.xpos
+    ),
+    React.createElement(
+      'p',
+      null,
+      'Y: ',
+      props.ypos
+    ),
+    React.createElement(
+      'p',
+      null,
+      'HP: ',
+      props.hp
+    ),
+    React.createElement(
+      'p',
+      null,
+      'Weapon: ',
+      props.weapon
+    ),
+    React.createElement(
+      'p',
+      null,
+      'Attack: ',
+      props.atkMin,
+      '-',
+      props.atkMax
+    )
+  );
+};
+
 var Game = function (_React$Component) {
   _inherits(Game, _React$Component);
 
@@ -17,8 +66,15 @@ var Game = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this, props));
 
     _this.state = {
-      positionX: 40,
-      positionY: 40,
+      hero: {
+        x: 40,
+        y: 40,
+        HP: 100,
+        atkMin: 10,
+        atkMax: 15,
+        weapon: 'none',
+        weaponBonus: 0
+      },
       enemys: [{
         x: 120,
         y: 100
@@ -85,9 +141,9 @@ var Game = function (_React$Component) {
     value: function handleLeft() {
       if (this.wallDetection("left", -20)) {
         var movement = this.enemyDetection("left", -20);
-        this.setState({
-          positionX: this.state.positionX + movement
-        });
+        var hero = Object.assign({}, this.state.hero);
+        hero.x = this.state.hero.x + movement;
+        this.setState({ hero: hero });
       }
     }
   }, {
@@ -95,9 +151,9 @@ var Game = function (_React$Component) {
     value: function handleUp() {
       if (this.wallDetection("up", -20)) {
         var movement = this.enemyDetection("up", -20);
-        this.setState({
-          positionY: this.state.positionY + movement
-        });
+        var hero = Object.assign({}, this.state.hero);
+        hero.y = this.state.hero.y + movement;
+        this.setState({ hero: hero });
       }
     }
   }, {
@@ -105,9 +161,9 @@ var Game = function (_React$Component) {
     value: function handleRight() {
       if (this.wallDetection("right", 20)) {
         var movement = this.enemyDetection("right", 20);
-        this.setState({
-          positionX: this.state.positionX + movement
-        });
+        var hero = Object.assign({}, this.state.hero);
+        hero.x = this.state.hero.x + movement;
+        this.setState({ hero: hero });
       }
     }
   }, {
@@ -115,9 +171,9 @@ var Game = function (_React$Component) {
     value: function handleDown() {
       if (this.wallDetection("down", 20)) {
         var movement = this.enemyDetection("down", 20);
-        this.setState({
-          positionY: this.state.positionY + movement
-        });
+        var hero = Object.assign({}, this.state.hero);
+        hero.y = this.state.hero.y + movement;
+        this.setState({ hero: hero });
       }
     }
   }, {
@@ -126,7 +182,7 @@ var Game = function (_React$Component) {
       if (direction == "left" || direction == "right") {
         for (var a = 0; a < this.state.enemys.length; a++) {
           var tempEnemy = this.state.enemys[a];
-          if (this.state.positionX + increment == tempEnemy.x && this.state.positionY == tempEnemy.y) {
+          if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
             console.log("Side Whack!");
             return 0;
           }
@@ -135,7 +191,7 @@ var Game = function (_React$Component) {
       } else if (direction == "up" || direction == "down") {
         for (var a = 0; a < this.state.enemys.length; a++) {
           var tempEnemy = this.state.enemys[a];
-          if (this.state.positionY + increment == tempEnemy.y && this.state.positionX == tempEnemy.x) {
+          if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
             console.log("Vertical Whack!");
             return 0;
           }
@@ -149,7 +205,7 @@ var Game = function (_React$Component) {
       if (direction == "left" || direction == "right") {
         for (var a = 0; a < this.state.playArea.length; a++) {
           var tempPlayArea = this.state.playArea[a];
-          if (this.state.positionX + increment >= tempPlayArea.x && this.state.positionX + increment < tempPlayArea.x + tempPlayArea.width && this.state.positionY >= tempPlayArea.y && this.state.positionY < tempPlayArea.y + tempPlayArea.height) {
+          if (this.state.hero.x + increment >= tempPlayArea.x && this.state.hero.x + increment < tempPlayArea.x + tempPlayArea.width && this.state.hero.y >= tempPlayArea.y && this.state.hero.y < tempPlayArea.y + tempPlayArea.height) {
             return true;
           }
         }
@@ -157,7 +213,7 @@ var Game = function (_React$Component) {
       } else if (direction == "up" || direction == "down") {
         for (var a = 0; a < this.state.playArea.length; a++) {
           var tempPlayArea = this.state.playArea[a];
-          if (this.state.positionY + increment >= tempPlayArea.y && this.state.positionY + increment < tempPlayArea.y + tempPlayArea.height && this.state.positionX >= tempPlayArea.x && this.state.positionX < tempPlayArea.x + tempPlayArea.width) {
+          if (this.state.hero.y + increment >= tempPlayArea.y && this.state.hero.y + increment < tempPlayArea.y + tempPlayArea.height && this.state.hero.x >= tempPlayArea.x && this.state.hero.x < tempPlayArea.x + tempPlayArea.width) {
             return true;
           }
         }
@@ -172,8 +228,8 @@ var Game = function (_React$Component) {
         backgroundColor: 'blue',
         width: 20,
         height: 20,
-        top: this.state.positionY,
-        left: this.state.positionX
+        top: this.state.hero.y,
+        left: this.state.hero.x
       };
 
       var locateEnemys = this.state.enemys.map(function (thing, index) {
@@ -207,7 +263,8 @@ var Game = function (_React$Component) {
         React.createElement('div', { style: character }),
         ' ',
         locateEnemys,
-        playSpace
+        playSpace,
+        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atkMin: this.state.hero.atkMin, atkMax: this.state.hero.atkMax })
       );
     }
   }]);
