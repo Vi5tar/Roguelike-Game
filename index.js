@@ -25,6 +25,22 @@ var Game = function (_React$Component) {
       }, {
         x: 140,
         y: 140
+      }],
+      playArea: [{
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 360
+      }, {
+        x: 400,
+        y: 180,
+        width: 200,
+        height: 20
+      }, {
+        x: 200,
+        y: 360,
+        width: 20,
+        height: 200
       }]
     };
     _this.handleKeyPress = _this.handleKeyPress.bind(_this);
@@ -32,6 +48,7 @@ var Game = function (_React$Component) {
     _this.handleUp = _this.handleUp.bind(_this);
     _this.handleRight = _this.handleRight.bind(_this);
     _this.handleDown = _this.handleDown.bind(_this);
+    _this.wallDetection = _this.wallDetection.bind(_this);
     return _this;
   }
 
@@ -66,38 +83,46 @@ var Game = function (_React$Component) {
   }, {
     key: 'handleLeft',
     value: function handleLeft() {
-      var movement = this.collisionDetection("left", -20);
-      this.setState({
-        positionX: this.state.positionX + movement
-      });
+      if (this.wallDetection("left", -20)) {
+        var movement = this.enemyDetection("left", -20);
+        this.setState({
+          positionX: this.state.positionX + movement
+        });
+      }
     }
   }, {
     key: 'handleUp',
     value: function handleUp() {
-      var movement = this.collisionDetection("up", -20);
-      this.setState({
-        positionY: this.state.positionY + movement
-      });
+      if (this.wallDetection("up", -20)) {
+        var movement = this.enemyDetection("up", -20);
+        this.setState({
+          positionY: this.state.positionY + movement
+        });
+      }
     }
   }, {
     key: 'handleRight',
     value: function handleRight() {
-      var movement = this.collisionDetection("right", 20);
-      this.setState({
-        positionX: this.state.positionX + movement
-      });
+      if (this.wallDetection("right", 20)) {
+        var movement = this.enemyDetection("right", 20);
+        this.setState({
+          positionX: this.state.positionX + movement
+        });
+      }
     }
   }, {
     key: 'handleDown',
     value: function handleDown() {
-      var movement = this.collisionDetection("down", 20);
-      this.setState({
-        positionY: this.state.positionY + movement
-      });
+      if (this.wallDetection("down", 20)) {
+        var movement = this.enemyDetection("down", 20);
+        this.setState({
+          positionY: this.state.positionY + movement
+        });
+      }
     }
   }, {
-    key: 'collisionDetection',
-    value: function collisionDetection(direction, increment) {
+    key: 'enemyDetection',
+    value: function enemyDetection(direction, increment) {
       if (direction == "left" || direction == "right") {
         for (var a = 0; a < this.state.enemys.length; a++) {
           var tempEnemy = this.state.enemys[a];
@@ -119,6 +144,27 @@ var Game = function (_React$Component) {
       }
     }
   }, {
+    key: 'wallDetection',
+    value: function wallDetection(direction, increment) {
+      if (direction == "left" || direction == "right") {
+        for (var a = 0; a < this.state.playArea.length; a++) {
+          var tempPlayArea = this.state.playArea[a];
+          if (this.state.positionX + increment >= tempPlayArea.x && this.state.positionX + increment < tempPlayArea.x + tempPlayArea.width && this.state.positionY >= tempPlayArea.y && this.state.positionY < tempPlayArea.y + tempPlayArea.height) {
+            return true;
+          }
+        }
+        return false;
+      } else if (direction == "up" || direction == "down") {
+        for (var a = 0; a < this.state.playArea.length; a++) {
+          var tempPlayArea = this.state.playArea[a];
+          if (this.state.positionY + increment >= tempPlayArea.y && this.state.positionY + increment < tempPlayArea.y + tempPlayArea.height && this.state.positionX >= tempPlayArea.x && this.state.positionX < tempPlayArea.x + tempPlayArea.width) {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var character = {
@@ -130,7 +176,7 @@ var Game = function (_React$Component) {
         left: this.state.positionX
       };
 
-      var boardCreate = this.state.enemys.map(function (thing, index) {
+      var locateEnemys = this.state.enemys.map(function (thing, index) {
         var enemy = {
           position: 'absolute',
           backgroundColor: 'red',
@@ -142,12 +188,26 @@ var Game = function (_React$Component) {
         return React.createElement('div', { style: enemy });
       });
 
+      var playSpace = this.state.playArea.map(function (thing, index) {
+        var playArea = {
+          position: 'absolute',
+          backgroundColor: 'yellow',
+          zIndex: -1,
+          width: thing.width,
+          height: thing.height,
+          top: thing.y,
+          left: thing.x
+        };
+        return React.createElement('div', { style: playArea });
+      });
+
       return React.createElement(
         'div',
         null,
         React.createElement('div', { style: character }),
         ' ',
-        boardCreate
+        locateEnemys,
+        playSpace
       );
     }
   }]);
