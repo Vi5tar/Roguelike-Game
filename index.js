@@ -225,29 +225,33 @@ var Game = function (_React$Component) {
     value: function render() {
       var character = {
         position: 'absolute',
-        backgroundColor: 'blue',
-        width: 20,
-        height: 20,
-        top: this.state.hero.y,
+        //backgroundColor: 'blue',
+        //width: 20,
+        //height: 20,
+        top: this.state.hero.y - 4,
         left: this.state.hero.x
       };
 
       var locateEnemys = this.state.enemys.map(function (thing, index) {
         var enemy = {
           position: 'absolute',
-          backgroundColor: 'red',
-          width: 20,
-          height: 20,
-          top: thing.y,
+          //backgroundColor: 'red',
+          //width: 20,
+          //height: 20,
+          top: thing.y - 4,
           left: thing.x
         };
-        return React.createElement('div', { style: enemy });
+        return React.createElement(
+          'div',
+          { style: enemy },
+          React.createElement('img', { src: 'images/ATTAK_000.png', width: '20', height: '20' })
+        );
       });
 
       var playSpace = this.state.playArea.map(function (thing, index) {
         var playArea = {
           position: 'absolute',
-          backgroundColor: 'yellow',
+          backgroundColor: 'gray',
           zIndex: -1,
           width: thing.width,
           height: thing.height,
@@ -260,8 +264,11 @@ var Game = function (_React$Component) {
       return React.createElement(
         'div',
         null,
-        React.createElement('div', { style: character }),
-        ' ',
+        React.createElement(
+          'div',
+          { style: character },
+          React.createElement('img', { src: 'images/_IDLE_000.png', width: '20', height: '20' })
+        ),
         locateEnemys,
         playSpace,
         React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atkMin: this.state.hero.atkMin, atkMax: this.state.hero.atkMax })
