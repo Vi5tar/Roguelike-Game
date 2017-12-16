@@ -228,7 +228,7 @@ var Game = function (_React$Component) {
         //backgroundColor: 'blue',
         //width: 20,
         //height: 20,
-        top: this.state.hero.y,
+        top: this.state.hero.y - 4,
         left: this.state.hero.x
       };
 
@@ -238,20 +238,20 @@ var Game = function (_React$Component) {
           //backgroundColor: 'red',
           //width: 20,
           //height: 20,
-          top: thing.y,
+          top: thing.y - 4,
           left: thing.x
         };
         return React.createElement(
           'div',
           { style: enemy },
-          React.createElement('i', { className: 'fab fa-empire fa-lg', 'data-fa-transform': 'up-2' })
+          React.createElement('img', { src: 'images/ATTAK_000.png', width: '20', height: '20' })
         );
       });
 
       var playSpace = this.state.playArea.map(function (thing, index) {
         var playArea = {
           position: 'absolute',
-          backgroundColor: 'yellow',
+          backgroundColor: 'gray',
           zIndex: -1,
           width: thing.width,
           height: thing.height,
@@ -267,7 +267,7 @@ var Game = function (_React$Component) {
         React.createElement(
           'div',
           { style: character },
-          React.createElement('i', { className: 'fab fa-rebel fa-lg', 'data-fa-transform': 'up-2' })
+          React.createElement('img', { src: 'images/_IDLE_000.png', width: '20', height: '20' })
         ),
         locateEnemys,
         playSpace,
