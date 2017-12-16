@@ -173,9 +173,9 @@ class Game extends React.Component {
   render() {
     const character = {
       position: 'absolute',
-      backgroundColor: 'blue',
-      width: 20,
-      height: 20,
+      //backgroundColor: 'blue',
+      //width: 20,
+      //height: 20,
       top: this.state.hero.y,
       left: this.state.hero.x
     }
@@ -183,13 +183,15 @@ class Game extends React.Component {
     const locateEnemys = this.state.enemys.map((thing, index) => {
       var enemy = {
         position: 'absolute',
-        backgroundColor: 'red',
-        width: 20,
-        height: 20,
+        //backgroundColor: 'red',
+        //width: 20,
+        //height: 20,
         top: thing.y,
         left: thing.x
       }
-      return <div style={enemy}></div>
+      return <div style={enemy}>
+        <i className="fab fa-empire fa-lg" data-fa-transform="up-2"></i>
+      </div>
     })
 
     const playSpace = this.state.playArea.map((thing, index) => {
@@ -206,7 +208,10 @@ class Game extends React.Component {
     })
 
     return (<div>
-      <div style={character}/> {locateEnemys}
+      <div style={character}>
+        <i className="fab fa-rebel fa-lg" data-fa-transform="up-2"></i>
+      </div>
+      {locateEnemys}
       {playSpace}
       <HeroStats xpos={this.state.hero.x} ypos={this.state.hero.y} hp={this.state.hero.HP} weapon={this.state.hero.weapon} atkMin={this.state.hero.atkMin} atkMax={this.state.hero.atkMax}/>
     </div>);
