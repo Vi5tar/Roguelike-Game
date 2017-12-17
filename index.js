@@ -77,10 +77,16 @@ var Game = function (_React$Component) {
       },
       enemys: [{
         x: 120,
-        y: 100
+        y: 100,
+        status: 1,
+        hp: 20,
+        atk: 5
       }, {
         x: 140,
-        y: 140
+        y: 140,
+        status: 1,
+        hp: 20,
+        atk: 5
       }],
       playArea: [{
         x: 0,
@@ -179,21 +185,35 @@ var Game = function (_React$Component) {
   }, {
     key: 'enemyDetection',
     value: function enemyDetection(direction, increment) {
+      var enemys = [];
+      for (var b = 0; b < this.state.enemys.length; b++) {
+        enemys.push(this.state.enemys[b]);
+      }
       if (direction == "left" || direction == "right") {
-        for (var a = 0; a < this.state.enemys.length; a++) {
-          var tempEnemy = this.state.enemys[a];
-          if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
-            console.log("Side Whack!");
-            return 0;
+        for (var a = 0; a < enemys.length; a++) {
+          var tempEnemy = enemys[a];
+          if (tempEnemy.status == 1) {
+            if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
+              console.log("Side Whack!");
+              this.combat(tempEnemy);
+              enemys[a] = tempEnemy;
+              this.setState({ enemys: enemys });
+              return 0;
+            }
           }
         }
         return increment;
       } else if (direction == "up" || direction == "down") {
-        for (var a = 0; a < this.state.enemys.length; a++) {
-          var tempEnemy = this.state.enemys[a];
-          if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
-            console.log("Vertical Whack!");
-            return 0;
+        for (var a = 0; a < enemys.length; a++) {
+          var tempEnemy = enemys[a];
+          if (tempEnemy.status == 1) {
+            if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
+              console.log("Vertical Whack!");
+              this.combat(tempEnemy);
+              enemys[a] = tempEnemy;
+              this.setState({ enemys: enemys });
+              return 0;
+            }
           }
         }
         return increment;
@@ -221,6 +241,24 @@ var Game = function (_React$Component) {
       }
     }
   }, {
+    key: 'combat',
+    value: function combat(enemy) {
+      var hero = Object.assign({}, this.state.hero);
+      if (enemy.hp > 0) {
+        enemy.hp = enemy.hp - hero.atkMin;
+        hero.HP = hero.HP - enemy.atk;
+        if (enemy.hp <= 0) {
+          enemy.status = 0;
+        }
+        if (hero.HP <= 0) {
+          this.setState({ hero: hero });
+          alert("GAME OVER");
+          document.location.reload();
+        }
+        this.setState({ hero: hero });
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var character = {
@@ -241,11 +279,13 @@ var Game = function (_React$Component) {
           top: thing.y - 4,
           left: thing.x
         };
-        return React.createElement(
-          'div',
-          { style: enemy },
-          React.createElement('img', { src: 'images/ATTAK_000.png', width: '20', height: '20' })
-        );
+        if (thing.status == 1) {
+          return React.createElement(
+            'div',
+            { style: enemy },
+            React.createElement('img', { src: 'images/ATTAK_000.png', width: '20', height: '20' })
+          );
+        }
       });
 
       var playSpace = this.state.playArea.map(function (thing, index) {

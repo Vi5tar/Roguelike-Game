@@ -35,10 +35,16 @@ class Game extends React.Component {
       enemys: [
         {
           x: 120,
-          y: 100
+          y: 100,
+          status: 1,
+          hp: 20,
+          atk: 5
         }, {
           x: 140,
-          y: 140
+          y: 140,
+          status: 1,
+          hp: 20,
+          atk: 5
         }
       ],
       playArea: [
@@ -129,21 +135,35 @@ class Game extends React.Component {
   }
 
   enemyDetection(direction, increment) {
+    var enemys = [];
+    for (var b = 0; b < this.state.enemys.length; b++) {
+      enemys.push(this.state.enemys[b]);
+    }
     if (direction == "left" || direction == "right") {
-      for (var a = 0; a < this.state.enemys.length; a++) {
-        var tempEnemy = this.state.enemys[a];
-        if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
-          console.log("Side Whack!");
-          return 0;
+      for (var a = 0; a < enemys.length; a++) {
+        var tempEnemy = enemys[a];
+        if (tempEnemy.status == 1) {
+          if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
+            console.log("Side Whack!");
+            this.combat(tempEnemy);
+            enemys[a] = tempEnemy;
+            this.setState({enemys});
+            return 0;
+          }
         }
       }
       return increment;
     } else if (direction == "up" || direction == "down") {
-      for (var a = 0; a < this.state.enemys.length; a++) {
-        var tempEnemy = this.state.enemys[a];
-        if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
-          console.log("Vertical Whack!");
-          return 0;
+      for (var a = 0; a < enemys.length; a++) {
+        var tempEnemy = enemys[a];
+        if (tempEnemy.status == 1) {
+          if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
+            console.log("Vertical Whack!");
+            this.combat(tempEnemy);
+            enemys[a] = tempEnemy;
+            this.setState({enemys});
+            return 0;
+          }
         }
       }
       return increment;
@@ -170,6 +190,23 @@ class Game extends React.Component {
     }
   }
 
+  combat(enemy) {
+    let hero = Object.assign({}, this.state.hero);
+    if (enemy.hp > 0) {
+      enemy.hp = enemy.hp - hero.atkMin;
+      hero.HP = hero.HP - enemy.atk;
+      if (enemy.hp <= 0) {
+        enemy.status = 0;
+      }
+      if (hero.HP <= 0) {
+        this.setState({hero});
+        alert("GAME OVER");
+        document.location.reload();
+      }
+      this.setState({hero});
+    }
+  }
+
   render() {
     const character = {
       position: 'absolute',
@@ -189,10 +226,12 @@ class Game extends React.Component {
         top: thing.y - 4,
         left: thing.x
       }
-      return <div style={enemy}>
-        {/* <i className="fab fa-empire fa-lg" data-fa-transform="up-2"></i> */}
-        <img src="images/ATTAK_000.png" width="20" height="20"></img>
-      </div>
+      if (thing.status == 1) {
+        return <div style={enemy}>
+          {/* <i className="fab fa-empire fa-lg" data-fa-transform="up-2"></i> */}
+          <img src="images/ATTAK_000.png" width="20" height="20"></img>
+        </div>
+      }
     })
 
     const playSpace = this.state.playArea.map((thing, index) => {
