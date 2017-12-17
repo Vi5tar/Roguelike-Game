@@ -307,7 +307,7 @@ var Game = function (_React$Component) {
         React.createElement(
           'div',
           { style: character },
-          React.createElement('img', { src: 'images/_IDLE_000.png', width: '20', height: '20' })
+          React.createElement('img', { src: 'images/IDLE_000.png', width: '20', height: '20' })
         ),
         locateEnemys,
         playSpace,

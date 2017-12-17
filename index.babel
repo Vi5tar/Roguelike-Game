@@ -250,7 +250,7 @@ class Game extends React.Component {
     return (<div>
       <div style={character}>
         {/* <i className="fab fa-rebel fa-lg" data-fa-transform="up-2"></i> */}
-        <img src="images/_IDLE_000.png" width="20" height="20"></img>
+        <img src="images/IDLE_000.png" width="20" height="20"></img>
       </div>
       {locateEnemys}
       {playSpace}
