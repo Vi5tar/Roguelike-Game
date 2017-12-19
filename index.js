@@ -103,13 +103,14 @@ var Game = function (_React$Component) {
         y: 360,
         width: 20,
         height: 200
+      }],
+      potions: [{
+        x: 200,
+        y: 200,
+        status: 1
       }]
     };
     _this.handleKeyPress = _this.handleKeyPress.bind(_this);
-    _this.handleLeft = _this.handleLeft.bind(_this);
-    _this.handleUp = _this.handleUp.bind(_this);
-    _this.handleRight = _this.handleRight.bind(_this);
-    _this.handleDown = _this.handleDown.bind(_this);
     _this.wallDetection = _this.wallDetection.bind(_this);
     return _this;
   }
@@ -129,56 +130,31 @@ var Game = function (_React$Component) {
     value: function handleKeyPress(event) {
       switch (event.keyCode) {
         case 37:
-          this.handleLeft();
+          this.handleMovement("left", -20);
           break;
         case 38:
-          this.handleUp();
+          this.handleMovement("up", -20);
           break;
         case 39:
-          this.handleRight();
+          this.handleMovement("right", 20);
           break;
         case 40:
-          this.handleDown();
+          this.handleMovement("down", 20);
           break;
       }
     }
   }, {
-    key: 'handleLeft',
-    value: function handleLeft() {
-      if (this.wallDetection("left", -20)) {
-        var movement = this.enemyDetection("left", -20);
+    key: 'handleMovement',
+    value: function handleMovement(direction, increment) {
+      if (this.wallDetection(direction, increment)) {
+        var movement = this.enemyDetection(direction, increment);
         var hero = Object.assign({}, this.state.hero);
-        hero.x = this.state.hero.x + movement;
-        this.setState({ hero: hero });
-      }
-    }
-  }, {
-    key: 'handleUp',
-    value: function handleUp() {
-      if (this.wallDetection("up", -20)) {
-        var movement = this.enemyDetection("up", -20);
-        var hero = Object.assign({}, this.state.hero);
-        hero.y = this.state.hero.y + movement;
-        this.setState({ hero: hero });
-      }
-    }
-  }, {
-    key: 'handleRight',
-    value: function handleRight() {
-      if (this.wallDetection("right", 20)) {
-        var movement = this.enemyDetection("right", 20);
-        var hero = Object.assign({}, this.state.hero);
-        hero.x = this.state.hero.x + movement;
-        this.setState({ hero: hero });
-      }
-    }
-  }, {
-    key: 'handleDown',
-    value: function handleDown() {
-      if (this.wallDetection("down", 20)) {
-        var movement = this.enemyDetection("down", 20);
-        var hero = Object.assign({}, this.state.hero);
-        hero.y = this.state.hero.y + movement;
+        hero.HP = hero.HP + this.potionDetection(direction, increment);
+        if (direction == "left" || direction == "right") {
+          hero.x = this.state.hero.x + movement;
+        } else if (direction == "up" || direction == "down") {
+          hero.y = this.state.hero.y + movement;
+        }
         this.setState({ hero: hero });
       }
     }
@@ -217,6 +193,37 @@ var Game = function (_React$Component) {
           }
         }
         return increment;
+      }
+    }
+  }, {
+    key: 'potionDetection',
+    value: function potionDetection(direction, increment) {
+      var potions = [];
+      for (var c = 0; c < this.state.potions.length; c++) {
+        potions.push(this.state.potions[c]);
+      }
+      if (direction == "left" || direction == "right") {
+        for (var d = 0; d < potions.length; d++) {
+          if (potions[d].status == 1) {
+            if (this.state.hero.x + increment == potions[d].x && this.state.hero.y == potions[d].y) {
+              potions[d].status = 0;
+              this.setState({ potions: potions });
+              return 20;
+            }
+          }
+        }
+        return 0;
+      } else if (direction == "up" || direction == "down") {
+        for (var d = 0; d < potions.length; d++) {
+          if (potions[d].status == 1) {
+            if (this.state.hero.y + increment == potions[d].y && this.state.hero.x == potions[d].x) {
+              potions[d].status = 0;
+              this.setState({ potions: potions });
+              return 20;
+            }
+          }
+        }
+        return 0;
       }
     }
   }, {
@@ -288,6 +295,25 @@ var Game = function (_React$Component) {
         }
       });
 
+      var locatePotions = this.state.potions.map(function (thing, index) {
+        var potion = {
+          //backgroundColor: 'green',
+          //width: 20,
+          //height: 20,
+          //color: 'green',
+          position: 'absolute',
+          left: thing.x,
+          top: thing.y
+        };
+        if (thing.status == 1) {
+          return React.createElement(
+            'div',
+            { style: potion },
+            React.createElement('i', { className: 'fas fa-flask', 'data-fa-transform': 'right-2.5 up-2' })
+          );
+        }
+      });
+
       var playSpace = this.state.playArea.map(function (thing, index) {
         var playArea = {
           position: 'absolute',
@@ -310,6 +336,7 @@ var Game = function (_React$Component) {
           React.createElement('img', { src: 'images/IDLE_000.png', width: '20', height: '20' })
         ),
         locateEnemys,
+        locatePotions,
         playSpace,
         React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atkMin: this.state.hero.atkMin, atkMax: this.state.hero.atkMax })
       );
