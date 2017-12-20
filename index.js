@@ -66,6 +66,9 @@ var Game = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this, props));
 
     _this.state = {
+      gameParamaters: {
+        enemyCount: 7
+      },
       hero: {
         x: 40,
         y: 40,
@@ -75,19 +78,19 @@ var Game = function (_React$Component) {
         weapon: 'none',
         weaponBonus: 0
       },
-      enemys: [{
-        x: 120,
-        y: 100,
-        status: 1,
-        hp: 20,
-        atk: 5
-      }, {
-        x: 140,
-        y: 140,
-        status: 1,
-        hp: 20,
-        atk: 5
-      }],
+      enemys: [/*{
+               x: 120,
+               y: 100,
+               status: 1,
+               hp: 20,
+               atk: 5
+               }, {
+               x: 140,
+               y: 140,
+               status: 1,
+               hp: 20,
+               atk: 5
+               }*/],
       playArea: [{
         x: 0,
         y: 0,
@@ -265,9 +268,60 @@ var Game = function (_React$Component) {
         this.setState({ hero: hero });
       }
     }
+
+    //populates the enemys at random. Number of enemys is determined by
+    //this.state.gameParamaters.enemyCount.
+
+  }, {
+    key: 'createEnemys',
+    value: function createEnemys() {
+      var enemys = [];
+      for (var n = 0; n < this.state.gameParamaters.enemyCount; n++) {
+        var randomCords = this.randomPlayableCords();
+        while (randomCords == false) {
+          randomCords = this.randomPlayableCords();
+        }
+        enemys.push({ x: randomCords[0], y: randomCords[1], status: 1, hp: 20, atk: 5 });
+      }
+      this.setState({ enemys: enemys });
+    }
+
+    //returns a number evenly divisible by 20 within a range
+
+  }, {
+    key: 'getRandomIntInclusive',
+    value: function getRandomIntInclusive(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      var number = Math.floor(Math.random() * (max - min + 1)) + min;
+      while (number % 20 != 0) {
+        number = Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      return number;
+    }
+
+    //ensures the cordinates are within the playable space
+
+  }, {
+    key: 'randomPlayableCords',
+    value: function randomPlayableCords() {
+      var x = this.getRandomIntInclusive(0, 1920);
+      var y = this.getRandomIntInclusive(0, 1080);
+      for (var a = 0; a < this.state.playArea.length; a++) {
+        var tempPlayArea = this.state.playArea[a];
+        if (x >= tempPlayArea.x && x < tempPlayArea.x + tempPlayArea.width && y >= tempPlayArea.y && y < tempPlayArea.y + tempPlayArea.height) {
+          return [x, y];
+        }
+      }
+      return false;
+    }
   }, {
     key: 'render',
     value: function render() {
+      if (this.state.enemys.length == 0) {
+        this.createEnemys();
+      }
+
       var character = {
         position: 'absolute',
         //backgroundColor: 'blue',
