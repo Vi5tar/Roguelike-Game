@@ -37,6 +37,12 @@ var HeroStats = function HeroStats(props) {
     React.createElement(
       'p',
       null,
+      'Level: ',
+      props.level
+    ),
+    React.createElement(
+      'p',
+      null,
       'HP: ',
       props.hp
     ),
@@ -50,9 +56,13 @@ var HeroStats = function HeroStats(props) {
       'p',
       null,
       'Attack: ',
-      props.atkMin,
-      '-',
-      props.atkMax
+      props.atk
+    ),
+    React.createElement(
+      'p',
+      null,
+      'XP: ',
+      props.xp
     )
   );
 };
@@ -72,25 +82,18 @@ var Game = function (_React$Component) {
       hero: {
         x: 40,
         y: 40,
+        maxHP: 100,
         HP: 100,
-        atkMin: 10,
-        atkMax: 15,
+        atk: 10,
         weapon: 'none',
-        weaponBonus: 0
+        weaponBonus: 0,
+        xp: 0,
+        level: 1
       },
-      enemys: [/*{
-               x: 120,
-               y: 100,
-               status: 1,
-               hp: 20,
-               atk: 5
-               }, {
-               x: 140,
-               y: 140,
-               status: 1,
-               hp: 20,
-               atk: 5
-               }*/],
+      level: {
+        levelAt: 10
+      },
+      enemys: [],
       playArea: [{
         x: 0,
         y: 0,
@@ -173,7 +176,6 @@ var Game = function (_React$Component) {
           var tempEnemy = enemys[a];
           if (tempEnemy.status == 1) {
             if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
-              console.log("Side Whack!");
               this.combat(tempEnemy);
               enemys[a] = tempEnemy;
               this.setState({ enemys: enemys });
@@ -187,7 +189,6 @@ var Game = function (_React$Component) {
           var tempEnemy = enemys[a];
           if (tempEnemy.status == 1) {
             if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
-              console.log("Vertical Whack!");
               this.combat(tempEnemy);
               enemys[a] = tempEnemy;
               this.setState({ enemys: enemys });
@@ -255,10 +256,11 @@ var Game = function (_React$Component) {
     value: function combat(enemy) {
       var hero = Object.assign({}, this.state.hero);
       if (enemy.hp > 0) {
-        enemy.hp = enemy.hp - hero.atkMin;
+        enemy.hp = enemy.hp - hero.atk;
         hero.HP = hero.HP - enemy.atk;
         if (enemy.hp <= 0) {
           enemy.status = 0;
+          hero.xp += enemy.xpGranted;
         }
         if (hero.HP <= 0) {
           this.setState({ hero: hero });
@@ -266,6 +268,7 @@ var Game = function (_React$Component) {
           document.location.reload();
         }
         this.setState({ hero: hero });
+        this.levelUp();
       }
     }
 
@@ -281,7 +284,14 @@ var Game = function (_React$Component) {
         while (randomCords == false) {
           randomCords = this.randomPlayableCords();
         }
-        enemys.push({ x: randomCords[0], y: randomCords[1], status: 1, hp: 20, atk: 5 });
+        enemys.push({
+          x: randomCords[0],
+          y: randomCords[1],
+          status: 1,
+          hp: 20,
+          atk: 5,
+          xpGranted: 5
+        });
       }
       this.setState({ enemys: enemys });
     }
@@ -314,6 +324,27 @@ var Game = function (_React$Component) {
         }
       }
       return false;
+    }
+  }, {
+    key: 'levelUp',
+    value: function levelUp() {
+      var hero = Object.assign({}, this.state.hero);
+      if (hero.xp >= this.state.level.levelAt) {
+        this.increaseLevel(hero);
+        var level = Object.assign({}, this.state.level);
+        level.levelAt = level.levelAt * 1.5 + level.levelAt;
+        this.setState({ level: level });
+      }
+    }
+  }, {
+    key: 'increaseLevel',
+    value: function increaseLevel(hero) {
+      var increase = 1 / hero.level;
+      hero.maxHP += hero.maxHP * increase;
+      hero.HP = hero.maxHP;
+      hero.atk += hero.atk * increase;
+      hero.level++;
+      this.setState({ hero: hero });
     }
   }, {
     key: 'render',
@@ -392,7 +423,7 @@ var Game = function (_React$Component) {
         locateEnemys,
         locatePotions,
         playSpace,
-        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atkMin: this.state.hero.atkMin, atkMax: this.state.hero.atkMax })
+        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk, atkMax: this.state.hero.atkMax, xp: this.state.hero.xp, level: this.state.hero.level })
       );
     }
   }]);

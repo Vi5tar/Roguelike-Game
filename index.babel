@@ -12,10 +12,11 @@ const HeroStats = (props) => {
   return (<div style={heroMenu}>
     <p>X: {props.xpos}</p>
     <p>Y: {props.ypos}</p>
+    <p>Level: {props.level}</p>
     <p>HP: {props.hp}</p>
     <p>Weapon: {props.weapon}</p>
-    <p>Attack: {props.atkMin}
-      -{props.atkMax}</p>
+    <p>Attack: {props.atk}</p>
+    <p>XP: {props.xp}</p>
   </div>)
 }
 
@@ -29,25 +30,18 @@ class Game extends React.Component {
       hero: {
         x: 40,
         y: 40,
+        maxHP: 100,
         HP: 100,
-        atkMin: 10,
-        atkMax: 15,
+        atk: 10,
         weapon: 'none',
-        weaponBonus: 0
+        weaponBonus: 0,
+        xp: 0,
+        level: 1
       },
-      enemys: [/*{
-          x: 120,
-          y: 100,
-          status: 1,
-          hp: 20,
-          atk: 5
-        }, {
-          x: 140,
-          y: 140,
-          status: 1,
-          hp: 20,
-          atk: 5
-        }*/],
+      level: {
+        levelAt: 10
+      },
+      enemys: [],
       playArea: [
         {
           x: 0,
@@ -126,7 +120,6 @@ class Game extends React.Component {
         var tempEnemy = enemys[a];
         if (tempEnemy.status == 1) {
           if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
-            console.log("Side Whack!");
             this.combat(tempEnemy);
             enemys[a] = tempEnemy;
             this.setState({enemys});
@@ -140,7 +133,6 @@ class Game extends React.Component {
         var tempEnemy = enemys[a];
         if (tempEnemy.status == 1) {
           if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
-            console.log("Vertical Whack!");
             this.combat(tempEnemy);
             enemys[a] = tempEnemy;
             this.setState({enemys});
@@ -205,10 +197,11 @@ class Game extends React.Component {
   combat(enemy) {
     let hero = Object.assign({}, this.state.hero);
     if (enemy.hp > 0) {
-      enemy.hp = enemy.hp - hero.atkMin;
+      enemy.hp = enemy.hp - hero.atk;
       hero.HP = hero.HP - enemy.atk;
       if (enemy.hp <= 0) {
-        enemy.status = 0;
+        enemy.status = 0
+        hero.xp += enemy.xpGranted;
       }
       if (hero.HP <= 0) {
         this.setState({hero});
@@ -216,6 +209,7 @@ class Game extends React.Component {
         document.location.reload();
       }
       this.setState({hero});
+      this.levelUp();
     }
   }
 
@@ -228,7 +222,14 @@ class Game extends React.Component {
       while (randomCords == false) {
         randomCords = this.randomPlayableCords();
       }
-      enemys.push({x: randomCords[0], y: randomCords[1], status: 1, hp: 20, atk: 5})
+      enemys.push({
+        x: randomCords[0],
+        y: randomCords[1],
+        status: 1,
+        hp: 20,
+        atk: 5,
+        xpGranted: 5
+      })
     }
     this.setState({enemys});
   }
@@ -255,6 +256,25 @@ class Game extends React.Component {
       }
     }
     return false;
+  }
+
+  levelUp() {
+    let hero = Object.assign({}, this.state.hero);
+    if (hero.xp >= this.state.level.levelAt) {
+      this.increaseLevel(hero);
+      let level = Object.assign({}, this.state.level);
+      level.levelAt = level.levelAt * 1.5 + level.levelAt;
+      this.setState({level});
+    }
+  }
+
+  increaseLevel(hero) {
+    var increase = 1 / (hero.level);
+    hero.maxHP += hero.maxHP * increase;
+    hero.HP = hero.maxHP;
+    hero.atk += hero.atk * increase;
+    hero.level++;
+    this.setState({hero});
   }
 
   render() {
@@ -326,7 +346,7 @@ class Game extends React.Component {
       {locateEnemys}
       {locatePotions}
       {playSpace}
-      <HeroStats xpos={this.state.hero.x} ypos={this.state.hero.y} hp={this.state.hero.HP} weapon={this.state.hero.weapon} atkMin={this.state.hero.atkMin} atkMax={this.state.hero.atkMax}/>
+      <HeroStats xpos={this.state.hero.x} ypos={this.state.hero.y} hp={this.state.hero.HP} weapon={this.state.hero.weapon} atk={this.state.hero.atk} atkMax={this.state.hero.atkMax} xp={this.state.hero.xp} level={this.state.hero.level}/>
     </div>);
   }
 }
