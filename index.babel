@@ -4,8 +4,8 @@ const heroMenu = {
   color: 'white',
   width: 200,
   height: 300,
-  top: 0,
-  left: 700
+  top: 450,
+  left: 500
 }
 
 const HeroStats = (props) => {
@@ -25,7 +25,19 @@ class Game extends React.Component {
     super(props);
     this.state = {
       gameParamaters: {
-        enemyCount: 7
+        enemyCount: 7,
+        weapons: [
+          {
+            name: "none",
+            atkBonus: 0
+          }, {
+            name: "Club",
+            atkBonus: 2
+          }, {
+            name: "Sword",
+            atkBonus: 5
+          }
+        ]
       },
       hero: {
         x: 40,
@@ -35,6 +47,7 @@ class Game extends React.Component {
         atk: 10,
         weapon: 'none',
         weaponBonus: 0,
+        weaponCounter: 0,
         xp: 0,
         level: 1
       },
@@ -64,6 +77,13 @@ class Game extends React.Component {
         {
           x: 200,
           y: 200,
+          status: 1
+        }
+      ],
+      weaponBox: [
+        {
+          x: 200,
+          y: 180,
           status: 1
         }
       ]
@@ -101,6 +121,7 @@ class Game extends React.Component {
       var movement = this.enemyDetection(direction, increment);
       let hero = Object.assign({}, this.state.hero);
       hero.HP = hero.HP + this.potionDetection(direction, increment);
+      hero.weaponCounter = hero.weaponCounter + this.weaponBoxDetection(direction, increment);
       if (direction == "left" || direction == "right") {
         hero.x = this.state.hero.x + movement;
       } else if (direction == "up" || direction == "down") {
@@ -167,6 +188,36 @@ class Game extends React.Component {
             potions[d].status = 0;
             this.setState({potions});
             return 20;
+          }
+        }
+      }
+      return 0;
+    }
+  }
+
+  weaponBoxDetection(direction, increment) {
+    var weaponBox = [];
+    for (var c = 0; c < this.state.weaponBox.length; c++) {
+      weaponBox.push(this.state.weaponBox[c]);
+    }
+    if (direction == "left" || direction == "right") {
+      for (var d = 0; d < weaponBox.length; d++) {
+        if (weaponBox[d].status == 1) {
+          if (this.state.hero.x + increment == weaponBox[d].x && this.state.hero.y == weaponBox[d].y) {
+            weaponBox[d].status = 0;
+            this.setState({weaponBox});
+            return 1;
+          }
+        }
+      }
+      return 0;
+    } else if (direction == "up" || direction == "down") {
+      for (var d = 0; d < weaponBox.length; d++) {
+        if (weaponBox[d].status == 1) {
+          if (this.state.hero.y + increment == weaponBox[d].y && this.state.hero.x == weaponBox[d].x) {
+            weaponBox[d].status = 0;
+            this.setState({weaponBox});
+            return 1;
           }
         }
       }
@@ -325,6 +376,21 @@ class Game extends React.Component {
       }
     })
 
+    const locateWeaponBoxes = this.state.weaponBox.map((thing, index) => {
+      var weaponBox = {
+        backgroundColor: 'green',
+        width: 20,
+        height: 20,
+        color: 'green',
+        position: 'absolute',
+        left: thing.x,
+        top: thing.y
+      }
+      if (thing.status == 1) {
+        return <div style={weaponBox}></div>
+      }
+    })
+
     const playSpace = this.state.playArea.map((thing, index) => {
       var playArea = {
         position: 'absolute',
@@ -345,8 +411,9 @@ class Game extends React.Component {
       </div>
       {locateEnemys}
       {locatePotions}
+      {locateWeaponBoxes}
       {playSpace}
-      <HeroStats xpos={this.state.hero.x} ypos={this.state.hero.y} hp={this.state.hero.HP} weapon={this.state.hero.weapon} atk={this.state.hero.atk} atkMax={this.state.hero.atkMax} xp={this.state.hero.xp} level={this.state.hero.level}/>
+      <HeroStats xpos={this.state.hero.x} ypos={this.state.hero.y} hp={this.state.hero.HP} weapon={this.state.gameParamaters.weapons[this.state.hero.weaponCounter].name} atk={this.state.hero.atk} atkMax={this.state.hero.atkMax} xp={this.state.hero.xp} level={this.state.hero.level}/>
     </div>);
   }
 }
