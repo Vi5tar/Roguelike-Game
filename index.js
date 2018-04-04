@@ -14,8 +14,8 @@ var heroMenu = {
   color: 'white',
   width: 200,
   height: 300,
-  top: 0,
-  left: 700
+  top: 450,
+  left: 500
 };
 
 var HeroStats = function HeroStats(props) {
@@ -77,7 +77,17 @@ var Game = function (_React$Component) {
 
     _this.state = {
       gameParamaters: {
-        enemyCount: 7
+        enemyCount: 7,
+        weapons: [{
+          name: "none",
+          atkBonus: 0
+        }, {
+          name: "Club",
+          atkBonus: 2
+        }, {
+          name: "Sword",
+          atkBonus: 5
+        }]
       },
       hero: {
         x: 40,
@@ -87,6 +97,7 @@ var Game = function (_React$Component) {
         atk: 10,
         weapon: 'none',
         weaponBonus: 0,
+        weaponCounter: 0,
         xp: 0,
         level: 1
       },
@@ -113,6 +124,11 @@ var Game = function (_React$Component) {
       potions: [{
         x: 200,
         y: 200,
+        status: 1
+      }],
+      weaponBox: [{
+        x: 200,
+        y: 180,
         status: 1
       }]
     };
@@ -156,6 +172,11 @@ var Game = function (_React$Component) {
         var movement = this.enemyDetection(direction, increment);
         var hero = Object.assign({}, this.state.hero);
         hero.HP = hero.HP + this.potionDetection(direction, increment);
+        if (this.weaponBoxDetection(direction, increment) == 1) {
+          hero.weaponCounter++;
+          hero.weapon = this.state.gameParamaters.weapons[hero.weaponCounter].name;
+          hero.weaponBonus = this.state.gameParamaters.weapons[hero.weaponCounter].atkBonus;
+        }
         if (direction == "left" || direction == "right") {
           hero.x = this.state.hero.x + movement;
         } else if (direction == "up" || direction == "down") {
@@ -231,6 +252,37 @@ var Game = function (_React$Component) {
       }
     }
   }, {
+    key: 'weaponBoxDetection',
+    value: function weaponBoxDetection(direction, increment) {
+      var weaponBox = [];
+      for (var c = 0; c < this.state.weaponBox.length; c++) {
+        weaponBox.push(this.state.weaponBox[c]);
+      }
+      if (direction == "left" || direction == "right") {
+        for (var d = 0; d < weaponBox.length; d++) {
+          if (weaponBox[d].status == 1) {
+            if (this.state.hero.x + increment == weaponBox[d].x && this.state.hero.y == weaponBox[d].y) {
+              weaponBox[d].status = 0;
+              this.setState({ weaponBox: weaponBox });
+              return 1;
+            }
+          }
+        }
+        return 0;
+      } else if (direction == "up" || direction == "down") {
+        for (var d = 0; d < weaponBox.length; d++) {
+          if (weaponBox[d].status == 1) {
+            if (this.state.hero.y + increment == weaponBox[d].y && this.state.hero.x == weaponBox[d].x) {
+              weaponBox[d].status = 0;
+              this.setState({ weaponBox: weaponBox });
+              return 1;
+            }
+          }
+        }
+        return 0;
+      }
+    }
+  }, {
     key: 'wallDetection',
     value: function wallDetection(direction, increment) {
       if (direction == "left" || direction == "right") {
@@ -256,7 +308,7 @@ var Game = function (_React$Component) {
     value: function combat(enemy) {
       var hero = Object.assign({}, this.state.hero);
       if (enemy.hp > 0) {
-        enemy.hp = enemy.hp - hero.atk;
+        enemy.hp = enemy.hp - (hero.atk + hero.weaponBonus);
         hero.HP = hero.HP - enemy.atk;
         if (enemy.hp <= 0) {
           enemy.status = 0;
@@ -399,6 +451,21 @@ var Game = function (_React$Component) {
         }
       });
 
+      var locateWeaponBoxes = this.state.weaponBox.map(function (thing, index) {
+        var weaponBox = {
+          backgroundColor: 'green',
+          width: 20,
+          height: 20,
+          color: 'green',
+          position: 'absolute',
+          left: thing.x,
+          top: thing.y
+        };
+        if (thing.status == 1) {
+          return React.createElement('div', { style: weaponBox });
+        }
+      });
+
       var playSpace = this.state.playArea.map(function (thing, index) {
         var playArea = {
           position: 'absolute',
@@ -422,8 +489,9 @@ var Game = function (_React$Component) {
         ),
         locateEnemys,
         locatePotions,
+        locateWeaponBoxes,
         playSpace,
-        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk, atkMax: this.state.hero.atkMax, xp: this.state.hero.xp, level: this.state.hero.level })
+        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk + this.state.hero.weaponBonus, xp: this.state.hero.xp, level: this.state.hero.level })
       );
     }
   }]);
@@ -432,3 +500,4 @@ var Game = function (_React$Component) {
 }(React.Component);
 
 ReactDOM.render(React.createElement(Game, null), document.getElementById("rogueLike"));
+//# sourceMappingURL=index.js.map
