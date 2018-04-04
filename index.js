@@ -172,7 +172,11 @@ var Game = function (_React$Component) {
         var movement = this.enemyDetection(direction, increment);
         var hero = Object.assign({}, this.state.hero);
         hero.HP = hero.HP + this.potionDetection(direction, increment);
-        hero.weaponCounter = hero.weaponCounter + this.weaponBoxDetection(direction, increment);
+        if (this.weaponBoxDetection(direction, increment) == 1) {
+          hero.weaponCounter++;
+          hero.weapon = this.state.gameParamaters.weapons[hero.weaponCounter].name;
+          hero.weaponBonus = this.state.gameParamaters.weapons[hero.weaponCounter].atkBonus;
+        }
         if (direction == "left" || direction == "right") {
           hero.x = this.state.hero.x + movement;
         } else if (direction == "up" || direction == "down") {
@@ -304,7 +308,7 @@ var Game = function (_React$Component) {
     value: function combat(enemy) {
       var hero = Object.assign({}, this.state.hero);
       if (enemy.hp > 0) {
-        enemy.hp = enemy.hp - hero.atk;
+        enemy.hp = enemy.hp - (hero.atk + hero.weaponBonus);
         hero.HP = hero.HP - enemy.atk;
         if (enemy.hp <= 0) {
           enemy.status = 0;
@@ -487,7 +491,7 @@ var Game = function (_React$Component) {
         locatePotions,
         locateWeaponBoxes,
         playSpace,
-        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.gameParamaters.weapons[this.state.hero.weaponCounter].name, atk: this.state.hero.atk, atkMax: this.state.hero.atkMax, xp: this.state.hero.xp, level: this.state.hero.level })
+        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk + this.state.hero.weaponBonus, xp: this.state.hero.xp, level: this.state.hero.level })
       );
     }
   }]);
