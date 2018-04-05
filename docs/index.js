@@ -109,6 +109,7 @@ var Game = function (_React$Component) {
       enemys: [],
       potions: [],
       weaponBox: [],
+      darkness: [],
       playArea: [{
         x: 0,
         y: 0,
@@ -177,6 +178,7 @@ var Game = function (_React$Component) {
           hero.y = this.state.hero.y + movement;
         }
         this.setState({ hero: hero });
+        this.createDarkness();
       }
     }
   }, {
@@ -384,6 +386,25 @@ var Game = function (_React$Component) {
       this.setState({ weaponBox: weaponBox });
     }
 
+    //creates the dark that overlays much of the play area.
+
+  }, {
+    key: 'createDarkness',
+    value: function createDarkness() {
+      var darkness = [];
+      for (var x = 0; x < window.innerWidth; x += 20) {
+        for (var y = 0; y < window.innerHeight; y += 20) {
+          if (x < this.state.hero.x - 100 || x > this.state.hero.x + 100 || y < this.state.hero.y - 100 || y > this.state.hero.y + 100) {
+            darkness.push({
+              x: x,
+              y: y
+            });
+          }
+        }
+      }
+      this.setState({ darkness: darkness });
+    }
+
     //returns a number evenly divisible by 20 within a range
 
   }, {
@@ -447,6 +468,10 @@ var Game = function (_React$Component) {
 
       if (this.state.weaponBox == 0) {
         this.createWeaponBoxes();
+      }
+
+      if (this.state.darkness == 0) {
+        this.createDarkness();
       }
 
       var character = {
@@ -523,6 +548,18 @@ var Game = function (_React$Component) {
         return React.createElement('div', { style: playArea });
       });
 
+      var darkness = this.state.darkness.map(function (thing, index) {
+        var darknessPixel = {
+          position: 'absolute',
+          backgroundColor: 'black',
+          width: 20,
+          height: 20,
+          top: thing.y,
+          left: thing.x
+        };
+        return React.createElement('div', { style: darknessPixel });
+      });
+
       return React.createElement(
         'div',
         null,
@@ -535,6 +572,7 @@ var Game = function (_React$Component) {
         locatePotions,
         locateWeaponBoxes,
         playSpace,
+        darkness,
         React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk + this.state.hero.weaponBonus, xp: this.state.hero.xp, level: this.state.hero.level })
       );
     }

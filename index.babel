@@ -59,6 +59,7 @@ class Game extends React.Component {
       enemys: [],
       potions: [],
       weaponBox: [],
+      darkness: [],
       playArea: [
         {
           x: 0,
@@ -122,6 +123,7 @@ class Game extends React.Component {
         hero.y = this.state.hero.y + movement;
       }
       this.setState({hero});
+      this.createDarkness();
     }
   }
 
@@ -315,6 +317,22 @@ class Game extends React.Component {
     this.setState({weaponBox});
   }
 
+  //creates the dark that overlays much of the play area.
+  createDarkness() {
+    let darkness = [];
+    for (let x = 0; x < window.innerWidth; x+=20) {
+      for (let y = 0; y < window.innerHeight; y+=20) {
+        if (x < this.state.hero.x - 100 || x > this.state.hero.x + 100 || y < this.state.hero.y - 100 || y > this.state.hero.y + 100) {
+          darkness.push({
+            x: x,
+            y: y
+          })
+        }
+      }
+    }
+    this.setState({darkness});
+  }
+
   //returns a number evenly divisible by 20 within a range
   getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
@@ -369,6 +387,10 @@ class Game extends React.Component {
 
     if (this.state.weaponBox == 0) {
       this.createWeaponBoxes();
+    }
+
+    if (this.state.darkness == 0) {
+      this.createDarkness();
     }
 
     const character = {
@@ -442,6 +464,18 @@ class Game extends React.Component {
       return <div style={playArea}/>
     })
 
+    const darkness = this.state.darkness.map((thing, index) => {
+        const darknessPixel = {
+          position: 'absolute',
+          backgroundColor: 'black',
+          width: 20,
+          height: 20,
+          top: thing.y,
+          left: thing.x
+        }
+        return <div style={darknessPixel}/>
+      })
+
     return (<div>
       <div style={character}>
         {/* <i className="fab fa-rebel fa-lg" data-fa-transform="up-2"></i> */}
@@ -451,6 +485,7 @@ class Game extends React.Component {
       {locatePotions}
       {locateWeaponBoxes}
       {playSpace}
+      {darkness}
       <HeroStats xpos={this.state.hero.x} ypos={this.state.hero.y} hp={this.state.hero.HP} weapon={this.state.hero.weapon} atk={this.state.hero.atk + this.state.hero.weaponBonus} xp={this.state.hero.xp} level={this.state.hero.level}/>
     </div>);
   }
