@@ -8,7 +8,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-//testing more even more
 var heroMenu = {
   position: 'absolute',
   backgroundColor: 'black',
@@ -79,6 +78,8 @@ var Game = function (_React$Component) {
     _this.state = {
       gameParamaters: {
         enemyCount: 7,
+        weaponCount: 2,
+        potCount: 4,
         weapons: [{
           name: "none",
           atkBonus: 0
@@ -106,6 +107,8 @@ var Game = function (_React$Component) {
         levelAt: 10
       },
       enemys: [],
+      potions: [],
+      weaponBox: [],
       playArea: [{
         x: 0,
         y: 0,
@@ -121,16 +124,6 @@ var Game = function (_React$Component) {
         y: 360,
         width: 20,
         height: 200
-      }],
-      potions: [{
-        x: 200,
-        y: 200,
-        status: 1
-      }],
-      weaponBox: [{
-        x: 200,
-        y: 180,
-        status: 1
       }]
     };
     _this.handleKeyPress = _this.handleKeyPress.bind(_this);
@@ -349,6 +342,48 @@ var Game = function (_React$Component) {
       this.setState({ enemys: enemys });
     }
 
+    //populates the potions at random. Number of potions is determined by
+    //this.state.gameParamaters.potCount.
+
+  }, {
+    key: 'createPots',
+    value: function createPots() {
+      var potions = [];
+      for (var n = 0; n < this.state.gameParamaters.potCount; n++) {
+        var randomCords = this.randomPlayableCords();
+        while (randomCords == false) {
+          randomCords = this.randomPlayableCords();
+        }
+        potions.push({
+          x: randomCords[0],
+          y: randomCords[1],
+          status: 1
+        });
+      }
+      this.setState({ potions: potions });
+    }
+
+    //populates the Weapon Boxes at random. Number of Boxes is determined by
+    //this.state.gameParamaters.weaponCount.
+
+  }, {
+    key: 'createWeaponBoxes',
+    value: function createWeaponBoxes() {
+      var weaponBox = [];
+      for (var n = 0; n < this.state.gameParamaters.weaponCount; n++) {
+        var randomCords = this.randomPlayableCords();
+        while (randomCords == false) {
+          randomCords = this.randomPlayableCords();
+        }
+        weaponBox.push({
+          x: randomCords[0],
+          y: randomCords[1],
+          status: 1
+        });
+      }
+      this.setState({ weaponBox: weaponBox });
+    }
+
     //returns a number evenly divisible by 20 within a range
 
   }, {
@@ -406,6 +441,14 @@ var Game = function (_React$Component) {
         this.createEnemys();
       }
 
+      if (this.state.potions == 0) {
+        this.createPots();
+      }
+
+      if (this.state.weaponBox == 0) {
+        this.createWeaponBoxes();
+      }
+
       var character = {
         position: 'absolute',
         //backgroundColor: 'blue',
@@ -433,17 +476,17 @@ var Game = function (_React$Component) {
         }
       });
 
-      var locatePotions = this.state.potions.map(function (thing, index) {
+      var locatePotions = this.state.potions.map(function (pot, index) {
         var potion = {
           //backgroundColor: 'green',
           //width: 20,
           //height: 20,
           //color: 'green',
           position: 'absolute',
-          left: thing.x,
-          top: thing.y
+          left: pot.x,
+          top: pot.y
         };
-        if (thing.status == 1) {
+        if (pot.status == 1) {
           return React.createElement(
             'div',
             { style: potion },

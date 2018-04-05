@@ -1,4 +1,3 @@
-//testing more even more
 const heroMenu = {
   position: 'absolute',
   backgroundColor: 'black',
@@ -27,6 +26,8 @@ class Game extends React.Component {
     this.state = {
       gameParamaters: {
         enemyCount: 7,
+        weaponCount: 2,
+        potCount: 4,
         weapons: [
           {
             name: "none",
@@ -56,6 +57,8 @@ class Game extends React.Component {
         levelAt: 10
       },
       enemys: [],
+      potions: [],
+      weaponBox: [],
       playArea: [
         {
           x: 0,
@@ -72,20 +75,6 @@ class Game extends React.Component {
           y: 360,
           width: 20,
           height: 200
-        }
-      ],
-      potions: [
-        {
-          x: 200,
-          y: 200,
-          status: 1
-        }
-      ],
-      weaponBox: [
-        {
-          x: 200,
-          y: 180,
-          status: 1
         }
       ]
     };
@@ -290,6 +279,42 @@ class Game extends React.Component {
     this.setState({enemys});
   }
 
+  //populates the potions at random. Number of potions is determined by
+  //this.state.gameParamaters.potCount.
+  createPots() {
+    let potions = [];
+    for (let n = 0; n < this.state.gameParamaters.potCount; n++) {
+      let randomCords = this.randomPlayableCords();
+      while (randomCords == false) {
+        randomCords = this.randomPlayableCords();
+      }
+      potions.push({
+        x: randomCords[0],
+        y: randomCords[1],
+        status: 1
+      })
+    }
+    this.setState({potions});
+  }
+
+  //populates the Weapon Boxes at random. Number of Boxes is determined by
+  //this.state.gameParamaters.weaponCount.
+  createWeaponBoxes() {
+    let weaponBox = [];
+    for (let n = 0; n < this.state.gameParamaters.weaponCount; n++) {
+      let randomCords = this.randomPlayableCords();
+      while (randomCords == false) {
+        randomCords = this.randomPlayableCords();
+      }
+      weaponBox.push({
+        x: randomCords[0],
+        y: randomCords[1],
+        status: 1
+      })
+    }
+    this.setState({weaponBox});
+  }
+
   //returns a number evenly divisible by 20 within a range
   getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
@@ -338,6 +363,14 @@ class Game extends React.Component {
       this.createEnemys();
     }
 
+    if (this.state.potions == 0) {
+      this.createPots();
+    }
+
+    if (this.state.weaponBox == 0) {
+      this.createWeaponBoxes();
+    }
+
     const character = {
       position: 'absolute',
       //backgroundColor: 'blue',
@@ -364,17 +397,17 @@ class Game extends React.Component {
       }
     })
 
-    const locatePotions = this.state.potions.map((thing, index) => {
+    const locatePotions = this.state.potions.map((pot, index) => {
       var potion = {
         //backgroundColor: 'green',
         //width: 20,
         //height: 20,
         //color: 'green',
         position: 'absolute',
-        left: thing.x,
-        top: thing.y
+        left: pot.x,
+        top: pot.y
       }
-      if (thing.status == 1) {
+      if (pot.status == 1) {
         return <div style={potion}>
           <i className="fas fa-flask" data-fa-transform="right-2.5 up-2"></i>
         </div>
