@@ -322,7 +322,12 @@ class Game extends React.Component {
     let darkness = [];
     for (let x = 0; x < window.innerWidth; x+=20) {
       for (let y = 0; y < window.innerHeight; y+=20) {
-        if (x < this.state.hero.x - 100 || x > this.state.hero.x + 100 || y < this.state.hero.y - 100 || y > this.state.hero.y + 100) {
+        //square viewable area
+        //if (x < this.state.hero.x - 100 || x > this.state.hero.x + 100 || y < this.state.hero.y - 100 || y > this.state.hero.y + 100) {
+        //diamond viewable area
+        //if (x - y < (this.state.hero.x - this.state.hero.y) - 100 || x - y > (this.state.hero.x - this.state.hero.y) + 100 || x + y < (this.state.hero.x + this.state.hero.y) - 100 || x + y > (this.state.hero.x + this.state.hero.y) + 100) {
+        //circular viewable area
+        if (Math.pow((x - this.state.hero.x), 2) + Math.pow((y - this.state.hero.y),2) > 12500) {
           darkness.push({
             x: x,
             y: y
