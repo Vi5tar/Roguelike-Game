@@ -191,8 +191,8 @@ var Game = function (_React$Component) {
       if (direction == "left" || direction == "right") {
         for (var a = 0; a < enemys.length; a++) {
           var tempEnemy = enemys[a];
-          if (tempEnemy.status == 1) {
-            if (this.state.hero.x + increment == tempEnemy.x && this.state.hero.y == tempEnemy.y) {
+          if (tempEnemy.status == 1 || tempEnemy.status == 2) {
+            if (this.state.hero.x + increment >= tempEnemy.x && this.state.hero.x + increment < tempEnemy.x + tempEnemy.width && this.state.hero.y >= tempEnemy.y && this.state.hero.y < tempEnemy.y + tempEnemy.height) {
               this.combat(tempEnemy);
               enemys[a] = tempEnemy;
               this.setState({ enemys: enemys });
@@ -204,8 +204,8 @@ var Game = function (_React$Component) {
       } else if (direction == "up" || direction == "down") {
         for (var a = 0; a < enemys.length; a++) {
           var tempEnemy = enemys[a];
-          if (tempEnemy.status == 1) {
-            if (this.state.hero.y + increment == tempEnemy.y && this.state.hero.x == tempEnemy.x) {
+          if (tempEnemy.status == 1 || tempEnemy.status == 2) {
+            if (this.state.hero.y + increment >= tempEnemy.y && this.state.hero.y + increment < tempEnemy.y + tempEnemy.height && this.state.hero.x >= tempEnemy.x && this.state.hero.x < tempEnemy.x + tempEnemy.width) {
               this.combat(tempEnemy);
               enemys[a] = tempEnemy;
               this.setState({ enemys: enemys });
@@ -315,6 +315,10 @@ var Game = function (_React$Component) {
         enemy.hp = enemy.hp - heroSwing;
         hero.HP = hero.HP - mobSwing;
         if (enemy.hp <= 0) {
+          if (enemy.status == 2) {
+            alert("YOU WIN!");
+            document.location.reload();
+          }
           enemy.status = 0;
           hero.xp += enemy.xpGranted;
         }
@@ -335,6 +339,7 @@ var Game = function (_React$Component) {
     key: 'createEnemys',
     value: function createEnemys() {
       var enemys = [];
+      //creates basic enemys
       for (var n = 0; n < this.state.gameParamaters.enemyCount; n++) {
         var randomCords = this.randomPlayableCords();
         while (randomCords == false) {
@@ -343,12 +348,24 @@ var Game = function (_React$Component) {
         enemys.push({
           x: randomCords[0],
           y: randomCords[1],
+          width: 20,
+          height: 20,
           status: 1,
           hp: 20,
           atk: 5,
           xpGranted: 5
         });
       }
+      //creates boss
+      enemys.push({
+        x: 100,
+        y: 140,
+        width: 40,
+        height: 40,
+        status: 2,
+        hp: 200,
+        atk: 20
+      });
       this.setState({ enemys: enemys });
     }
 
@@ -517,7 +534,13 @@ var Game = function (_React$Component) {
           return React.createElement(
             'div',
             { style: enemy },
-            React.createElement('img', { src: 'images/ATTAK_000.png', width: '20', height: '20' })
+            React.createElement('img', { src: 'images/ATTAK_000.png', width: thing.width, height: thing.height })
+          );
+        } else if (thing.status == 2) {
+          return React.createElement(
+            'div',
+            { style: enemy },
+            React.createElement('img', { src: 'images/ATTAK_000.png', width: thing.width, height: thing.height })
           );
         }
       });
