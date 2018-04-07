@@ -241,11 +241,17 @@ class Game extends React.Component {
     }
   }
 
-  combat(enemy) {
+  // carries out the math that constitutes combat. Determines attack of Hero
+  // and Mob and subtracts that from their HP pools until one of their pools
+  // reaches 0. If hero falls to zero game over. If mob falls to zero hero gains
+  // xp and mob disappears.
+    combat(enemy) {
     let hero = Object.assign({}, this.state.hero);
     if (enemy.hp > 0) {
-      enemy.hp = enemy.hp - (hero.atk + hero.weaponBonus);
-      hero.HP = hero.HP - enemy.atk;
+      const heroSwing = Math.round((hero.atk + hero.weaponBonus) * this.getRandomAtk());
+      const mobSwing = Math.round(enemy.atk * this.getRandomAtk());
+      enemy.hp = enemy.hp - heroSwing;
+      hero.HP = hero.HP - mobSwing;
       if (enemy.hp <= 0) {
         enemy.status = 0
         hero.xp += enemy.xpGranted;
@@ -336,6 +342,11 @@ class Game extends React.Component {
       }
     }
     this.setState({darkness});
+  }
+
+  //returns a number between .75 and 1
+  getRandomAtk() {
+    return (Math.floor(Math.random() * (100 - 75 + 1)) + 75) / 100;
   }
 
   //returns a number evenly divisible by 20 within a range
