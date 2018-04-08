@@ -12,28 +12,16 @@ var heroMenu = {
   position: 'absolute',
   backgroundColor: 'black',
   color: 'white',
-  width: 200,
-  height: 300,
-  top: 450,
-  left: 500
+  width: 160,
+  height: 200,
+  top: 0,
+  left: 800
 };
 
 var HeroStats = function HeroStats(props) {
   return React.createElement(
     'div',
     { style: heroMenu },
-    React.createElement(
-      'p',
-      null,
-      'X: ',
-      props.xpos
-    ),
-    React.createElement(
-      'p',
-      null,
-      'Y: ',
-      props.ypos
-    ),
     React.createElement(
       'p',
       null,
@@ -77,6 +65,7 @@ var Game = function (_React$Component) {
 
     _this.state = {
       gameParamaters: {
+        darkness: 1,
         enemyCount: 7,
         weaponCount: 2,
         potCount: 4,
@@ -113,18 +102,123 @@ var Game = function (_React$Component) {
       playArea: [{
         x: 0,
         y: 0,
-        width: 400,
-        height: 360
-      }, {
-        x: 400,
-        y: 180,
         width: 200,
+        height: 160
+      }, {
+        x: 200,
+        y: 140,
+        width: 400,
+        height: 20
+      }, {
+        x: 60,
+        y: 160,
+        width: 20,
+        height: 40
+      }, {
+        x: 200,
+        y: 0,
+        width: 120,
         height: 20
       }, {
         x: 200,
+        y: 280,
+        width: 200,
+        height: 20
+      }, {
+        x: 320,
+        y: 0,
+        width: 100,
+        height: 100
+      }, {
+        x: 440,
+        y: 20,
+        width: 100,
+        height: 100
+      }, {
+        x: 500,
+        y: 120,
+        width: 20,
+        height: 20
+      }, {
+        x: 640,
+        y: 40,
+        width: 20,
+        height: 60
+      }, {
+        x: 660,
+        y: 40,
+        width: 60,
+        height: 20
+      }, {
+        x: 500,
+        y: 340,
+        width: 220,
+        height: 20
+      }, {
+        x: 720,
+        y: 40,
+        width: 20,
+        height: 400
+      }, {
+        x: 400,
+        y: 200,
+        width: 160,
+        height: 100
+      }, {
+        x: 200,
+        y: 380,
+        width: 80,
+        height: 100
+      }, {
+        x: 600,
+        y: 100,
+        width: 80,
+        height: 100
+      }, {
+        x: 100,
+        y: 500,
+        width: 240,
+        height: 200
+      }, {
+        x: 40,
+        y: 200,
+        width: 160,
+        height: 200
+      }, {
+        x: 340,
+        y: 320,
+        width: 160,
+        height: 160
+      }, {
+        x: 640,
+        y: 440,
+        width: 140,
+        height: 160
+      }, {
+        x: 560,
         y: 360,
         width: 20,
-        height: 200
+        height: 380
+      }, {
+        x: 360,
+        y: 560,
+        width: 120,
+        height: 100
+      }, {
+        x: 480,
+        y: 640,
+        width: 220,
+        height: 20
+      }, {
+        x: 180,
+        y: 720,
+        width: 380,
+        height: 20
+      }, {
+        x: 180,
+        y: 700,
+        width: 20,
+        height: 20
       }]
     };
     _this.handleKeyPress = _this.handleKeyPress.bind(_this);
@@ -358,8 +452,8 @@ var Game = function (_React$Component) {
       }
       //creates boss
       enemys.push({
-        x: 100,
-        y: 140,
+        x: 280,
+        y: 520,
         width: 40,
         height: 40,
         status: 2,
@@ -416,23 +510,25 @@ var Game = function (_React$Component) {
   }, {
     key: 'createDarkness',
     value: function createDarkness() {
-      var darkness = [];
-      for (var x = 0; x < window.innerWidth; x += 20) {
-        for (var y = 0; y < window.innerHeight; y += 20) {
-          //square viewable area
-          //if (x < this.state.hero.x - 100 || x > this.state.hero.x + 100 || y < this.state.hero.y - 100 || y > this.state.hero.y + 100) {
-          //diamond viewable area
-          //if (x - y < (this.state.hero.x - this.state.hero.y) - 100 || x - y > (this.state.hero.x - this.state.hero.y) + 100 || x + y < (this.state.hero.x + this.state.hero.y) - 100 || x + y > (this.state.hero.x + this.state.hero.y) + 100) {
-          //circular viewable area
-          if (Math.pow(x - this.state.hero.x, 2) + Math.pow(y - this.state.hero.y, 2) > 12500) {
-            darkness.push({
-              x: x,
-              y: y
-            });
+      if (this.state.gameParamaters.darkness == 1) {
+        var darkness = [];
+        for (var x = 0; x < 960; x += 20) {
+          for (var y = 0; y < 740; y += 20) {
+            //square viewable area
+            //if (x < this.state.hero.x - 100 || x > this.state.hero.x + 100 || y < this.state.hero.y - 100 || y > this.state.hero.y + 100) {
+            //diamond viewable area
+            //if (x - y < (this.state.hero.x - this.state.hero.y) - 100 || x - y > (this.state.hero.x - this.state.hero.y) + 100 || x + y < (this.state.hero.x + this.state.hero.y) - 100 || x + y > (this.state.hero.x + this.state.hero.y) + 100) {
+            //circular viewable area
+            if (Math.pow(x - this.state.hero.x, 2) + Math.pow(y - this.state.hero.y, 2) > 12500) {
+              darkness.push({
+                x: x,
+                y: y
+              });
+            }
           }
         }
+        this.setState({ darkness: darkness });
       }
-      this.setState({ darkness: darkness });
     }
 
     //returns a number between .75 and 1
@@ -582,7 +678,7 @@ var Game = function (_React$Component) {
       var playSpace = this.state.playArea.map(function (thing, index) {
         var playArea = {
           position: 'absolute',
-          backgroundColor: 'gray',
+          backgroundColor: 'white',
           zIndex: -1,
           width: thing.width,
           height: thing.height,
@@ -617,7 +713,7 @@ var Game = function (_React$Component) {
         locateWeaponBoxes,
         playSpace,
         darkness,
-        React.createElement(HeroStats, { xpos: this.state.hero.x, ypos: this.state.hero.y, hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk + this.state.hero.weaponBonus, xp: this.state.hero.xp, level: this.state.hero.level })
+        React.createElement(HeroStats, { hp: this.state.hero.HP, weapon: this.state.hero.weapon, atk: this.state.hero.atk + this.state.hero.weaponBonus, xp: this.state.hero.xp, level: this.state.hero.level })
       );
     }
   }]);

@@ -6,3 +6,18 @@
   top: 40px;
   left: 40px;
 }
+
+body {
+  margin-top: 2%;
+  display: flex;
+  justify-content: center;
+  background-color: black;
+}
+
+#rogueLike {
+  position: relative;
+  width: 960px;
+  height: 740px;
+  background-color: gray;
+  z-index: -2;
+}
