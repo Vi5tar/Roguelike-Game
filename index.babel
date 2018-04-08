@@ -604,6 +604,7 @@ class Game extends React.Component {
         top: thing.y,
         left: thing.x
       }
+      return <div style={playArea}></div>
     })
 
     const darkness = this.state.darkness.map((thing, index) => {
