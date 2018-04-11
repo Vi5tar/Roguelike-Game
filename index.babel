@@ -581,16 +581,18 @@ class Game extends React.Component {
 
     const locateWeaponBoxes = this.state.weaponBox.map((thing, index) => {
       var weaponBox = {
-        backgroundColor: 'green',
+        //backgroundColor: 'green',
         width: 20,
         height: 20,
         color: 'green',
         position: 'absolute',
         left: thing.x,
-        top: thing.y
+        top: thing.y - 5
       }
       if (thing.status == 1) {
-        return <div style={weaponBox}></div>
+        return <div style={weaponBox}>
+          <img src="images/treasure_chest.png" width={weaponBox.width} height={weaponBox.height}></img>
+        </div>
       }
     })
 

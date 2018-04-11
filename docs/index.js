@@ -662,16 +662,20 @@ var Game = function (_React$Component) {
 
       var locateWeaponBoxes = this.state.weaponBox.map(function (thing, index) {
         var weaponBox = {
-          backgroundColor: 'green',
+          //backgroundColor: 'green',
           width: 20,
           height: 20,
           color: 'green',
           position: 'absolute',
           left: thing.x,
-          top: thing.y
+          top: thing.y - 5
         };
         if (thing.status == 1) {
-          return React.createElement('div', { style: weaponBox });
+          return React.createElement(
+            'div',
+            { style: weaponBox },
+            React.createElement('img', { src: 'images/treasure_chest.png', width: weaponBox.width, height: weaponBox.height })
+          );
         }
       });
 
