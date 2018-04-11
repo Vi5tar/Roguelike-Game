@@ -66,7 +66,7 @@ var Game = function (_React$Component) {
     _this.state = {
       gameParamaters: {
         darkness: 1,
-        enemyCount: 7,
+        enemyCount: 9,
         weaponCount: 2,
         potCount: 4,
         weapons: [{
@@ -445,9 +445,9 @@ var Game = function (_React$Component) {
           width: 20,
           height: 20,
           status: 1,
-          hp: 20,
-          atk: 5,
-          xpGranted: 5
+          hp: 50,
+          atk: 7,
+          xpGranted: 3
         });
       }
       //creates boss
@@ -458,7 +458,7 @@ var Game = function (_React$Component) {
         height: 40,
         status: 2,
         hp: 200,
-        atk: 20
+        atk: 25
       });
       this.setState({ enemys: enemys });
     }
@@ -584,7 +584,7 @@ var Game = function (_React$Component) {
     value: function increaseLevel(hero) {
       var increase = 1 / hero.level;
       hero.maxHP += hero.maxHP * increase;
-      hero.HP = hero.maxHP;
+      hero.HP = hero.maxHP / 2;
       hero.atk += hero.atk * increase;
       hero.level++;
       this.setState({ hero: hero });
@@ -596,15 +596,15 @@ var Game = function (_React$Component) {
         this.createEnemys();
       }
 
-      if (this.state.potions == 0) {
+      if (this.state.potions.length == 0) {
         this.createPots();
       }
 
-      if (this.state.weaponBox == 0) {
+      if (this.state.weaponBox.length == 0) {
         this.createWeaponBoxes();
       }
 
-      if (this.state.darkness == 0) {
+      if (this.state.darkness.length == 0) {
         this.createDarkness();
       }
 
